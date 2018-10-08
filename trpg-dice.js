@@ -24,13 +24,24 @@
  */
 
 /**
- * Returns an object generated from the dice string
+ * Error-first callback with object generated from the dice expression
  * @param {String} diceExpression - The dice-string to evaluate
  * @param {Object} options - Various flags to change rolling behavior
  * @param {Function} callback - The callback function to execute with error-first response 
  */
-function roll(diceExpression = `2d6+2`, options, callback) {
-  return `TODO: Placeholder`;
+function roll(diceExpression = `2d6+6`, options, callback) {
+  // TODO: Check diceExpression for only valid characters
+  // TODO: Check diceExpression doesn't start with or ends with a weird operator
+  // TODO: Parse dice expression for dice rolls and apply main logic accordingly, try/catch eval
+  callback(null, {
+    min: 0,
+    max: 1,
+    avg: 13,
+    rolls: [{
+      result: 14,
+      resultString: `[4]+[4]+6`
+    }]
+  });
 }
 
 module.exports = {
