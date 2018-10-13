@@ -23,24 +23,50 @@
  * SOFTWARE.
  */
 
+const DEFAULT_OPTIONS = {
+  roll: 1
+};
+
+const DICE_REGEX = /([0-9]+)?d[0-9]+/g;
+
 /**
  * Error-first callback with object generated from the dice expression
  * @param {String} diceExpression - The dice-string to evaluate
- * @param {Object} options - Various flags to change rolling behavior
+ * @param {Object} options - (optional) Various flags to change rolling behavior
  * @param {Function} callback - The callback function to execute with error-first response 
  */
-function roll(diceExpression = `2d6+6`, options, callback) {
+function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
+  if(typeof options === 'function') {
+    callback = options;
+    options = DEFAULT_OPTIONS;
+  }
+
   // TODO: Check diceExpression for only valid characters
   // TODO: Check diceExpression doesn't start with or ends with a weird operator
-  // TODO: Parse dice expression for dice rolls and apply main logic accordingly, try/catch eval
+  const diceCodes = diceExpression.match(DICE_REGEX);
+  let rolls = [];
+
+  for(let i = 0; i < options.roll; i++) {
+    let resultString = diceExpression;
+
+    for(let diceCode of diceCodes) {
+       // TODO: Parse dice expression and randomize
+      resultString.replace(diceCode, `[${diceCode}]`);
+
+      // TODO: try/catch eval for final result, EX { result: 14, resultString: `[4]+[4]+6` }
+
+      rolls.push({
+        result: 0, // TODO
+        resultString // TODO
+      });
+    }
+  }
+
   callback(null, {
-    min: 0,
-    max: 1,
+    min: 8,
+    max: 18,
     avg: 13,
-    rolls: [{
-      result: 14,
-      resultString: `[4]+[4]+6`
-    }]
+    rolls
   });
 }
 
