@@ -43,9 +43,38 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
 
   // TODO: Check diceExpression for only valid characters
   // TODO: Check diceExpression doesn't start with or ends with a weird operator
+
   const diceCodes = diceExpression.match(DICE_REGEX);
   let rolls = [];
 
+  /* calculate minimum value */
+  let minResultString = diceExpression;
+  for(let diceCode of diceCodes) {
+    let numberValues = diceCode.split('d');
+    let minValue = 1; // 1 die assumption on normal numbered dice
+    if(numberValues.length !== 1) {
+      minValue = numberValues[0]; // multi-dice
+    }
+
+    minResultString.replace(diceCode, minValue);
+  }
+  min = eval(minResultString);
+
+  /* calculate maximum value */
+  // TODO
+  for(let diceCode of diceCodes) {
+    let numberValues = diceCode.split('d');
+    if(numberValues.length === 1) {
+      numberValues = [1, numberValues[0]];
+    }
+
+    
+  }
+
+  /* calculate average value */
+  // TODO
+
+  /* Calculate rolls */
   for(let i = 0; i < options.roll; i++) {
     let resultString = diceExpression;
 
@@ -63,7 +92,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   }
 
   callback(null, {
-    min: 8,
+    min,
     max: 18,
     avg: 13,
     rolls
