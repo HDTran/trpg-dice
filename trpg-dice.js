@@ -56,20 +56,21 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
       minValue = numberValues[0]; // multi-dice
     }
 
-    minResultString.replace(diceCode, minValue);
+    minResultString.replace(diceCode, `(${minValue})`);
   }
   min = eval(minResultString);
 
   /* calculate maximum value */
-  // TODO
+  let maxResultString = diceExpression;
   for(let diceCode of diceCodes) {
     let numberValues = diceCode.split('d');
     if(numberValues.length === 1) {
       numberValues = [1, numberValues[0]];
     }
-
-    
+    let maxValue = Number(numberValues[0]) * Number(numberValues[1]);
+    maxResultString.replace(diceCode, `(${maxValue})`);
   }
+  max = eval(maxResultString);
 
   /* calculate average value */
   // TODO
@@ -93,7 +94,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
 
   callback(null, {
     min,
-    max: 18,
+    max,
     avg: 13,
     rolls
   });
