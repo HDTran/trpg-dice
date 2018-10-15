@@ -58,7 +58,12 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
 
     minResultString.replace(diceCode, `(${minValue})`);
   }
-  min = eval(minResultString);
+
+  try {
+    min = eval(minResultString);
+  } catch(err) {
+    callback(err, null);
+  }
 
   /* calculate maximum value */
   let maxResultString = diceExpression;
@@ -70,7 +75,12 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     let maxValue = Number(numberValues[0]) * Number(numberValues[1]);
     maxResultString.replace(diceCode, `(${maxValue})`);
   }
-  max = eval(maxResultString);
+
+  try {
+    max = eval(maxResultString);
+  } catch(err) {
+    callback(err, null);
+  }
 
   /* calculate average value */
   let avgResultString = diceExpression;
@@ -79,10 +89,15 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     if(numberValues.length === 1) {
       numberValues = [1, numberValues[0]];
     }
-    let avgValue = Number(numberValues[0]) * ((Number(numberValues[1])+1)/2);
+    let avgValue = Number(numberValues[0]) * ((Number(numberValues[1])+1)/2); // this even works for d1
     avgResultString.replace(diceCode, `(${avgValue})`);
   }
-  avg = eval(avgResultString);
+
+  try {
+    avg = eval(avgResultString);
+  } catch(err) {
+    callback(err, null);
+  }
 
   /* calculate rolls */
   for(let i = 0; i < options.roll; i++) {
@@ -91,14 +106,13 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     for(let diceCode of diceCodes) {
        // TODO: Parse dice expression and randomize
       resultString.replace(diceCode, `[${diceCode}]`);
-
-      // TODO: try/catch eval for final result, EX { result: 14, resultString: `[4]+[4]+6` }
-
-      rolls.push({
-        result: 0, // TODO
-        resultString // TODO
-      });
     }
+
+    // TODO: try/catch eval for final result, EX { result: 14, resultString: `[4]+[4]+6` }
+    rolls.push({
+      result: 0, // TODO
+      resultString // TODO
+    });
   }
 
   callback(null, {
