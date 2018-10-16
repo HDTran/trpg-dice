@@ -55,8 +55,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     if(numberValues.length !== 1) {
       minValue = numberValues[0]; // multi-dice
     }
-
-    minResultString.replace(diceCode, `(${minValue})`);
+    minResultString = minResultString.replace(diceCode, `(${minValue})`);
   }
 
   try {
@@ -73,7 +72,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
       numberValues = [1, numberValues[0]];
     }
     let maxValue = Number(numberValues[0]) * Number(numberValues[1]);
-    maxResultString.replace(diceCode, `(${maxValue})`);
+    maxResultString = maxResultString.replace(diceCode, `(${maxValue})`);
   }
 
   try {
@@ -90,7 +89,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
       numberValues = [1, numberValues[0]];
     }
     let avgValue = Number(numberValues[0]) * ((Number(numberValues[1])+1)/2); // this even works for d1
-    avgResultString.replace(diceCode, `(${avgValue})`);
+    avgResultString = avgResultString.replace(diceCode, `(${avgValue})`);
   }
 
   try {
@@ -104,15 +103,26 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     let resultString = diceExpression;
 
     for(let diceCode of diceCodes) {
-       // TODO: Parse dice expression and randomize
-      resultString.replace(diceCode, `[${diceCode}]`);
+      let numberValues = diceCode.split('d');
+      if(numberValues.length === 1) {
+        numberValues = [1, numberValues[0]];
+      }
+
+      let diceCodeResult = 0;
+      for(let j = 0; j < numberValues[0]; j++) {
+        diceCodeResult += Math.floor(Math.random() * numberValues[1]) + 1;
+      }
+      resultString = resultString.replace(diceCode, `[${diceCodeResult}]`);
     }
 
-    // TODO: try/catch eval for final result, EX { result: 14, resultString: `[4]+[4]+6` }
-    rolls.push({
-      result: 0, // TODO
-      resultString // TODO
-    });
+    try {
+      rolls.push({
+        result: eval(resultString.replace(/\[/g, `(`).replace(/\]/g, `)`)),
+        resultString
+      });
+    } catch(err) {
+      callback(err, null);
+    }
   }
 
   callback(null, {
