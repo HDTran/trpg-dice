@@ -27,6 +27,7 @@ const DEFAULT_OPTIONS = {
   roll: 1
 };
 
+const VALID_REGEX = /^[0-9d+-\/\(\)]*$/;
 const DICE_REGEX = /([0-9]+)?d[0-9]+/g;
 
 /**
@@ -41,7 +42,10 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     options = DEFAULT_OPTIONS;
   }
 
-  // TODO: Check diceExpression for only valid characters
+  /* test validity by only allowing certain characters */
+  const validPattern = new RegExp(VALID_REGEX);
+  if(!validPattern.test(diceExpression)) { return callback(new Error(`The dice expression includes characters that are not allowed.`), null); }
+  
   // TODO: Check diceExpression doesn't start with or ends with a weird operator
 
   const diceCodes = diceExpression.match(DICE_REGEX);
@@ -52,7 +56,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   for(let diceCode of diceCodes) {
     let numberValues = diceCode.split('d');
     let minValue = 1; // 1 die assumption on normal numbered dice
-    if(numberValues.length !== 1) {
+    if(numberValues[0] !== '') {
       minValue = numberValues[0]; // multi-dice
     }
     minResultString = minResultString.replace(diceCode, `(${minValue})`);
@@ -61,15 +65,15 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   try {
     min = eval(minResultString);
   } catch(err) {
-    callback(err, null);
+    return callback(err, null);
   }
 
   /* calculate maximum value */
   let maxResultString = diceExpression;
   for(let diceCode of diceCodes) {
     let numberValues = diceCode.split('d');
-    if(numberValues.length === 1) {
-      numberValues = [1, numberValues[0]];
+    if(numberValues[0] === '') {
+      numberValues[0] = 1;
     }
     let maxValue = Number(numberValues[0]) * Number(numberValues[1]);
     maxResultString = maxResultString.replace(diceCode, `(${maxValue})`);
@@ -78,15 +82,15 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   try {
     max = eval(maxResultString);
   } catch(err) {
-    callback(err, null);
+    return callback(err, null);
   }
 
   /* calculate average value */
   let avgResultString = diceExpression;
   for(let diceCode of diceCodes) {
     let numberValues = diceCode.split('d');
-    if(numberValues.length === 1) {
-      numberValues = [1, numberValues[0]];
+    if(numberValues[0] === '') {
+      numberValues[0] = 1;
     }
     let avgValue = Number(numberValues[0]) * ((Number(numberValues[1])+1)/2); // this even works for d1
     avgResultString = avgResultString.replace(diceCode, `(${avgValue})`);
@@ -95,7 +99,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   try {
     avg = eval(avgResultString);
   } catch(err) {
-    callback(err, null);
+    return callback(err, null);
   }
 
   /* calculate rolls */
@@ -104,8 +108,8 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
 
     for(let diceCode of diceCodes) {
       let numberValues = diceCode.split('d');
-      if(numberValues.length === 1) {
-        numberValues = [1, numberValues[0]];
+      if(numberValues[0] === '') {
+        numberValues[0] = 1;
       }
 
       let diceCodeResult = 0;
@@ -121,11 +125,11 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
         resultString
       });
     } catch(err) {
-      callback(err, null);
+      return callback(err, null);
     }
   }
 
-  callback(null, {
+  return callback(null, {
     min,
     max,
     avg,
