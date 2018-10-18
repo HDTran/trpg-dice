@@ -1,9 +1,16 @@
 # trpg-dice
 
 [![Build Status](https://travis-ci.com/HDTran/trpg-dice.svg?branch=master)](https://travis-ci.com/HDTran/trpg-dice)
+[![npm](https://img.shields.io/npm/v/trpg-dice.svg)](https://www.npmjs.com/package/trpg-dice)
+![NpmLicense](https://img.shields.io/npm/l/trpg-dice.svg)
 
 
 Tabletop RPG dice-roller with a multiple dice-types, rolling methods, minimum and maximum values, string output, and error-first callbacks.
+
+## Installation
+```sh
+npm install trpg-dice 
+```
 
 ## Usage
 To use the library, import the module and call the ``roll()`` method with a dice expression, an optional ``options`` parameter, and a callback function. Dice expressions with standard ``<number of dice>d<number of sides>`` are all supported as well as simple math.
