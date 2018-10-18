@@ -1,22 +1,25 @@
 # trpg-dice
-Tabletop RPG dice-roller with a multiple dice-types, rolling methods, minimum and maximum values, string output, and error-first callbacks.
 
 [![Build Status](https://travis-ci.com/HDTran/trpg-dice.svg?branch=master)](https://travis-ci.com/HDTran/trpg-dice)
 
+
+Tabletop RPG dice-roller with a multiple dice-types, rolling methods, minimum and maximum values, string output, and error-first callbacks.
+
 ## Usage
-To use the library, import the module and call the ``roll()`` method with an optional ``options`` parameter and a callback function.
+To use the library, import the module and call the ``roll()`` method with a dice expression, an optional ``options`` parameter, and a callback function. Dice expressions with standard ``<number of dice>d<number of sides>`` are all supported as well as simple math.
 
 ```javascript
 const dice = require('trpg-dice');
 
 dice.roll('2d6+10', callback);
-dice.roll('d20+2', { roll: 10 }, callback); // will roll d20+2 for 20 times
+dice.roll('d20+2', { roll: 10 }, callback); // will roll d20+2 for 10 times
 ```
 
-The ``roll()`` method is an error-first callback that invokes the callback function with an error (or null if none) and an object with the minimum, maximum, average, and roll results.
+The ``roll()`` method is an error-first callback that invokes the callback function with an error (or null if none) and an object with the original dice expression, minimum, maximum, average, and roll results.
 
 ```javascript
 {
+  expression: '2d6+2',
   min: 4,
   max: 14,
   avg: 9,

@@ -41,6 +41,15 @@ test(`average of d20 equal to 10.5`, (done) => {
   dice.roll(`d20`, callback);
 });
 
+test(`maximum of d100 equal to 100`, (done) => {
+  function callback(err, data) {
+    expect(data.max).toBe(100);
+    done();
+  }
+
+  dice.roll(`d100`, callback);
+});
+
 test(`illegal characters return error`, (done) => {
   function callback(err, data) {
     expect(err).not.toBeNull();

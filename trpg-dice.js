@@ -27,8 +27,8 @@ const DEFAULT_OPTIONS = {
   roll: 1
 };
 
-const VALID_REGEX = /^[0-9d+-\/\(\)]*$/;
-const DICE_REGEX = /([0-9]+)?d[0-9]+/g;
+const VALID_REGEX = /^[0-9d+-\/\(\)%]*$/;
+const DICE_REGEX = /([0-9]+)?d([0-9]+)|(%)/g;
 
 /**
  * Error-first callback with object generated from the dice expression
@@ -47,6 +47,10 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   if(!validPattern.test(diceExpression)) { return callback(new Error(`The dice expression includes characters that are not allowed.`), null); }
   
   // TODO: Check diceExpression doesn't start with or ends with a weird operator
+
+  /* replace d% with d100 */
+  const originalDiceExpression = diceExpression;
+  diceExpression = diceExpression.replace(/%/g, '100');
 
   const diceCodes = diceExpression.match(DICE_REGEX);
   let rolls = [];
@@ -130,6 +134,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   }
 
   return callback(null, {
+    expression: originalDiceExpression,
     min,
     max,
     avg,
