@@ -1,6 +1,8 @@
 # trpg-dice
 Tabletop RPG dice-roller with a multiple dice-types, rolling methods, minimum and maximum values, string output, and error-first callbacks.
 
+[![Build Status](https://travis-ci.com/HDTran/trpg-dice.svg?branch=master)](https://travis-ci.com/HDTran/trpg-dice)
+
 ## Usage
 To use the library, import the module and call the ``roll()`` method with an optional ``options`` parameter and a callback function.
 
