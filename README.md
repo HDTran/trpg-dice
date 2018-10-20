@@ -31,16 +31,16 @@ The ``roll()`` method is an error-first callback that invokes the callback funct
   max: 14,
   avg: 9,
   rolls: [
-    { result: 11, resultString: '[9]+2' },
-    { result: 10, resultString: '[8]+2' },
-    { result: 8, resultString: '[6]+2' },
-    { result: 11, resultString: '[9]+2' },
-    { result: 8, resultString: '[6]+2' },
-    { result: 6, resultString: '[4]+2' },
-    { result: 10, resultString: '[8]+2' },
-    { result: 9, resultString: '[7]+2' },
-    { result: 10, resultString: '[8]+2' },
-    { result: 5, resultString: '[3]+2' }
+    { result: 5, resultString: '(1+2)+2' },
+    { result: 5, resultString: '(1+2)+2' },
+    { result: 13, resultString: '(6+5)+2' },
+    { result: 6, resultString: '(2+2)+2' },
+    { result: 11, resultString: '(6+3)+2' },
+    { result: 9, resultString: '(2+5)+2' },
+    { result: 6, resultString: '(1+3)+2' },
+    { result: 9, resultString: '(5+2)+2' },
+    { result: 12, resultString: '(5+5)+2' },
+    { result: 7, resultString: '(4+1)+2' }
   ]
 }
 ```

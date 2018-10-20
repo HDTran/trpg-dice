@@ -116,16 +116,21 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
         numberValues[0] = 1;
       }
 
-      let diceCodeResult = 0;
+      let diceCodeResult = '';
       for(let j = 0; j < numberValues[0]; j++) {
-        diceCodeResult += Math.floor(Math.random() * numberValues[1]) + 1;
+        let diceValue = Math.floor(Math.random() * numberValues[1]) + 1;
+        if(diceCodeResult.length === 0 || diceValue < 0) {
+          diceCodeResult += diceValue.toString();
+        } else {
+          diceCodeResult += `+${diceValue.toString()}`
+        }
       }
-      resultString = resultString.replace(diceCode, `[${diceCodeResult}]`);
+      resultString = resultString.replace(diceCode, `(${diceCodeResult})`);
     }
 
     try {
       rolls.push({
-        result: eval(resultString.replace(/\[/g, `(`).replace(/\]/g, `)`)),
+        result: eval(resultString),
         resultString
       });
     } catch(err) {
