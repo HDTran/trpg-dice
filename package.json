@@ -1,6 +1,6 @@
 {
   "name": "trpg-dice",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Tabletop RPG dice-roller with a multiple dice-types, rolling methods, minimum and maximum values, string output, and error-first callbacks.",
   "main": "trpg-dice.js",
   "scripts": {
@@ -19,8 +19,13 @@
     "roll",
     "d20"
   ],
-  "author": "Huy Tran",
+  "author": "Huy Tran <gethuytran@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/HDTran/trpg-dice#readme",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/HDTran/trpg-dice.git"
+  },
   "devDependencies": {
     "jest": "^23.6.0"
   }

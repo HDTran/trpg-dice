@@ -109,6 +109,7 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   /* calculate rolls */
   for(let i = 0; i < options.roll; i++) {
     let resultString = diceExpression;
+    let condensedResultString = diceExpression;
 
     for(let diceCode of diceCodes) {
       let numberValues = diceCode.split('d');
@@ -117,8 +118,10 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
       }
 
       let diceCodeResult = '';
+      let diceCodeValue = 0;
       for(let j = 0; j < numberValues[0]; j++) {
         let diceValue = Math.floor(Math.random() * numberValues[1]) + 1;
+        diceCodeValue += diceValue;
         if(diceCodeResult.length === 0 || diceValue < 0) {
           diceCodeResult += diceValue.toString();
         } else {
@@ -126,12 +129,14 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
         }
       }
       resultString = resultString.replace(diceCode, `(${diceCodeResult})`);
+      condensedResultString = condensedResultString.replace(diceCode, `(${diceCodeValue})`);
     }
 
     try {
       rolls.push({
         result: eval(resultString),
-        resultString
+        resultString,
+        condensedResultString
       });
     } catch(err) {
       return callback(err, null);
