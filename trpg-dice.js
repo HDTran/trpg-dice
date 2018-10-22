@@ -27,8 +27,8 @@ const DEFAULT_OPTIONS = {
   roll: 1
 };
 
-const VALID_REGEX = /^[0-9d+-\/\(\)%]*$/;
-const DICE_REGEX = /([0-9]+)?d([0-9]+)|(%)/g;
+const VALID_REGEX = /^[0-9d+-\/\(\)%f]*$/;
+const DICE_REGEX = /([0-9]+)?d([0-9]+|%|f)/g;
 
 /**
  * Error-first callback with object generated from the dice expression
@@ -41,6 +41,8 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     callback = options;
     options = DEFAULT_OPTIONS;
   }
+
+  diceExpression = diceExpression.toLowerCase();
 
   /* test validity by only allowing certain characters */
   const validPattern = new RegExp(VALID_REGEX);
@@ -60,8 +62,14 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
   for(let diceCode of diceCodes) {
     let numberValues = diceCode.split('d');
     let minValue = 1; // 1 die assumption on normal numbered dice
+
+    if(numberValues[1] === 'f') {
+      minValue = -1; // fate/fudge dice
+    }
+
+    // multiple dice
     if(numberValues[0] !== '') {
-      minValue = numberValues[0]; // multi-dice
+      minValue = numberValues[0]*minValue; 
     }
     minResultString = minResultString.replace(diceCode, `(${minValue})`);
   }
@@ -79,7 +87,15 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     if(numberValues[0] === '') {
       numberValues[0] = 1;
     }
-    let maxValue = Number(numberValues[0]) * Number(numberValues[1]);
+
+    let maxValue; 
+
+    if(numberValues[1] !== 'f') {
+      maxValue = Number(numberValues[0]) * Number(numberValues[1]);
+    } else {
+      maxValue = Number(numberValues[0]); // fate/fudge dice, number of dice * 1 essentially
+    }
+
     maxResultString = maxResultString.replace(diceCode, `(${maxValue})`);
   }
 
@@ -96,7 +112,13 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
     if(numberValues[0] === '') {
       numberValues[0] = 1;
     }
-    let avgValue = Number(numberValues[0]) * ((Number(numberValues[1])+1)/2); // this even works for d1
+
+    let avgValue;
+    if(numberValues[1] !== 'f') {
+      avgValue = Number(numberValues[0]) * ((Number(numberValues[1])+1)/2); // this even works for d1
+    } else {
+      avgValue = 0; // fate/fudge dice, blank face
+    }
     avgResultString = avgResultString.replace(diceCode, `(${avgValue})`);
   }
 
@@ -118,9 +140,13 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
 
       let diceCodeResult = 0;
       for(let j = 0; j < numberValues[0]; j++) {
-        diceCodeResult += Math.floor(Math.random() * numberValues[1]) + 1;
+        if(numberValues[1] !== 'f') {
+          diceCodeResult += Math.floor(Math.random() * numberValues[1]) + 1;
+        } else {
+          diceCodeResult += Math.floor(Math.random() * 3) - 1 ; // fate/fudge
+        }
       }
-      resultString = resultString.replace(diceCode, `[${diceCodeResult}]`);
+      resultString = resultString.replace(diceCode, `(${diceCodeResult})`);
     }
 
     try {
