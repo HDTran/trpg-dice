@@ -1,6 +1,6 @@
-const dice = require('../trpg-dice');
+const dice = require("../trpg-dice");
 
-test(`roll 3 option rolls 3 times`, (done) => {
+test(`roll 3 option rolls 3 times`, done => {
   function callback(err, data) {
     expect(err).toBeNull();
     expect(data.rolls.length).toBe(3);
