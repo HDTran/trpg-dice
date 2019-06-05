@@ -1,6 +1,6 @@
 {
   "name": "trpg-dice",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Tabletop RPG dice-roller with a multiple dice-types, rolling methods, minimum and maximum values, string output, and error-first callbacks.",
   "main": "trpg-dice.js",
   "scripts": {
@@ -27,6 +27,8 @@
     "url": "https://github.com/HDTran/trpg-dice.git"
   },
   "devDependencies": {
-    "jest": "^23.6.0"
+    "eslint": "^5.16.0",
+    "eslint-plugin-jest": "^22.7.1",
+    "jest": "^24.8.0"
   }
 }

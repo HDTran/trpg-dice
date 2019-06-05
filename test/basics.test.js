@@ -51,7 +51,7 @@ test(`maximum of d100 equal to 100`, done => {
 });
 
 test(`illegal characters return error`, done => {
-  function callback(err, data) {
+  function callback(err) {
     expect(err).not.toBeNull();
     done();
   }
