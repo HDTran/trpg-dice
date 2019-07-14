@@ -70,3 +70,17 @@ test(`roll result of 2dF+2 between 0 and 4`, done => {
 
   dice.roll(`2dF+2`, callback);
 });
+
+// TODO: Implement keep/drop
+/*
+test(`roll result of 4d6k3 between 3 and 18`, done => {
+  function callback(err, data) {
+    expect(err).toBeNull();
+    expect(data.rolls[0].result).toBeGreaterThanOrEqual(3);
+    expect(data.rolls[0].result).toBeLessThanOrEqual(18);
+    done();
+  }
+
+  dice.roll(`4d6k3`, callback);
+});
+*/

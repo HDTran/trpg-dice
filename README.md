@@ -1,24 +1,25 @@
 # trpg-dice
 
-[![Build Status](https://travis-ci.com/HDTran/trpg-dice.svg?branch=master)](https://travis-ci.com/HDTran/trpg-dice)
+[![Build Status](https://travis-ci.org/HDTran/trpg-dice.svg?branch=master)](https://travis-ci.com/HDTran/trpg-dice)
 [![npm](https://img.shields.io/npm/v/trpg-dice.svg)](https://www.npmjs.com/package/trpg-dice)
 ![NpmLicense](https://img.shields.io/npm/l/trpg-dice.svg)
-
 
 Tabletop RPG dice-roller with a multiple dice-types, rolling methods, minimum and maximum values, string output, and error-first callbacks.
 
 ## Installation
+
 ```sh
-npm install trpg-dice 
+npm install trpg-dice
 ```
 
 ## Usage
-To use the library, import the module and call the ``roll()`` method with a dice expression, an optional ``options`` parameter, and a callback function. Dice expressions with standard ``<number of dice>d<number of sides>`` are all supported as well as simple math. To roll Fate/Fudge dice, use ``dF`` or ``df`` for the dice expression.
+
+To use the library, import the module and call the `roll()` method with a dice expression, an optional `options` parameter, and a callback function. Dice expressions with standard `<number of dice>d<number of sides>` are all supported as well as simple math. To roll Fate/Fudge dice, use `dF` or `df` for the dice expression.
 
 ```javascript
-const dice = require('trpg-dice');
+const dice = require("trpg-dice");
 
-function callback (err, result) {
+function callback(err, result) {
   if (err) {
     throw err;
   } else {
@@ -26,14 +27,14 @@ function callback (err, result) {
   }
 }
 
-dice.roll('2d6+10', callback);
-dice.roll('d20-2', { roll: 10 }, callback); // will roll d20-2 for 10 times
-dice.roll('4dF+2', callback); // will roll Fate/Fudge dice
-dice.roll('d8+d12', callback);
-dice.roll('4d6+(2d6/2)', callback)
+dice.roll("2d6+10", callback);
+dice.roll("d20-2", { roll: 10 }, callback); // will roll d20-2 for 10 times
+dice.roll("4dF+2", callback); // will roll Fate/Fudge dice
+dice.roll("d8+d12", callback);
+dice.roll("4d6+(2d6/2)", callback);
 ```
 
-The ``roll()`` method is an error-first callback that invokes the callback function with an error (or null if none) and an object with the original dice expression, minimum, maximum, average, and roll results.
+The `roll()` method is an error-first callback that invokes the callback function with an error (or null if none) and an object with the original dice expression, minimum, maximum, average, and roll results.
 
 ```javascript
 {
@@ -57,6 +58,7 @@ The ``roll()`` method is an error-first callback that invokes the callback funct
 ```
 
 ## Options
+
 The following options are currently supported:
 
-* **roll** - specifies the amount of times the dice expression should be rolled, increasing the number of roll results returned in the object
+- **roll** - specifies the amount of times the dice expression should be rolled, increasing the number of roll results returned in the object

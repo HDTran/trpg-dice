@@ -27,7 +27,10 @@ const DEFAULT_OPTIONS = {
   roll: 1
 };
 
-const VALID_REGEX = /^[0-9d+-\/\(\)%f]*$/;
+// TODO: Implement keep/drop
+// const VALID_REGEX = /^[0-9d\+\-\/\(\)%fkhdl]*$/;
+// const DICE_REGEX = /([0-9]+)?d([0-9]+|%|f)((k|kh|d|dl)([0-9]+))?/g;
+const VALID_REGEX = /^[0-9d\+\-\/\(\)%f]*$/;
 const DICE_REGEX = /([0-9]+)?d([0-9]+|%|f)/g;
 
 /**
@@ -63,73 +66,95 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
 
   const diceCodes = diceExpression.match(DICE_REGEX);
   let rolls = [];
+  let min = null;
+  let max = null;
+  let avg = null;
 
-  /* calculate minimum value */
   let minResultString = diceExpression;
+  let maxResultString = diceExpression;
+  let avgResultString = diceExpression;
+
   for (let diceCode of diceCodes) {
     let numberValues = diceCode.split("d");
-    let minValue = 1; // 1 die assumption on normal numbered dice
+    let numberOfDice = Number(numberValues[0]);
+    let numberOfDiceToRoll = numberOfDice;
+    let numberOfSides = numberValues[1];
 
+    // normalize dice number
+    if (numberValues[0] === "") {
+      numberOfDice = 1;
+      numberOfDiceToRoll = numberOfDice;
+    }
+
+    /* TODO: Implement drop/keep
+    // check for keep and drop and calculate dice number
+    let diceNumberModifier = 0;
+    let diceNumberMax = null;
+    if (numberValues[1].indexOf("kh") !== -1) {
+      let diceNumberAndKeep = numberValues[1].split("kh");
+      numberOfSides = diceNumberAndKeep[0];
+      diceNumberMax = diceNumberAndKeep[1];
+    } else if (numberValues[1].indexOf("k") !== -1) {
+      let diceNumberAndKeep = numberValues[1].split("k");
+      numberOfSides = diceNumberAndKeep[0];
+      diceNumberMax = diceNumberAndKeep[1];
+    } else if (numberValues[1].indexOf("dl") !== -1) {
+      let diceNumberAndDrop = numberValues[1].split("dl");
+      numberOfSides = diceNumberAndDrop[0];
+      diceNumberModifier = diceNumberAndDrop[1] * -1;
+    } else if (numberValues[1].indexOf("d") !== -1) {
+      let diceNumberAndDrop = numberValues[1].split("d");
+      numberOfSides = diceNumberAndDrop[0];
+      diceNumberModifier = diceNumberAndDrop[1] * -1;
+    }
+
+    numberOfDice = Number(numberOfDice) + diceNumberModifier;
+
+    // check first for keep/drop modifiers and modify multiple dice count
+    numberOfDice = numberOfDice < 0 ? 0 : numberOfDice;
+    if (
+      diceNumberMax !== null &&
+      diceNumberMax > -1 &&
+      diceNumberMax < numberOfDice
+    ) {
+      numberOfDice = diceNumberMax;
+    }
+    */
+
+    // 1 die assumption of lowest face equal 1 on normal numbered dice
+    let minValue = 1;
+    let maxValue;
+    let avgValue;
+
+    // fate/fudge dice
     if (numberValues[1] === "f") {
-      minValue = -1; // fate/fudge dice
+      minValue = -1;
+
+      // fate/fudge dice, number of dice * 1 essentially
+      maxValue = numberOfDice;
+
+      // fate/fudge dice, blank face
+      avgValue = 0;
+    } else {
+      maxValue = numberOfDice * Number(numberOfSides);
+
+      // this even works for d1
+      avgValue = numberOfDice * ((Number(numberOfSides) + 1) / 2);
     }
 
     // multiple dice
-    if (numberValues[0] !== "") {
-      minValue = numberValues[0] * minValue;
+    if (numberOfDice !== "") {
+      minValue = numberOfDice * minValue;
     }
+
     minResultString = minResultString.replace(diceCode, `(${minValue})`);
-  }
-
-  try {
-    min = eval(minResultString);
-  } catch (err) {
-    return callback(err, null);
-  }
-
-  /* calculate maximum value */
-  let maxResultString = diceExpression;
-  for (let diceCode of diceCodes) {
-    let numberValues = diceCode.split("d");
-    if (numberValues[0] === "") {
-      numberValues[0] = 1;
-    }
-
-    let maxValue;
-
-    if (numberValues[1] !== "f") {
-      maxValue = Number(numberValues[0]) * Number(numberValues[1]);
-    } else {
-      maxValue = Number(numberValues[0]); // fate/fudge dice, number of dice * 1 essentially
-    }
-
     maxResultString = maxResultString.replace(diceCode, `(${maxValue})`);
-  }
-
-  try {
-    max = eval(maxResultString);
-  } catch (err) {
-    return callback(err, null);
-  }
-
-  /* calculate average value */
-  let avgResultString = diceExpression;
-  for (let diceCode of diceCodes) {
-    let numberValues = diceCode.split("d");
-    if (numberValues[0] === "") {
-      numberValues[0] = 1;
-    }
-
-    let avgValue;
-    if (numberValues[1] !== "f") {
-      avgValue = Number(numberValues[0]) * ((Number(numberValues[1]) + 1) / 2); // this even works for d1
-    } else {
-      avgValue = 0; // fate/fudge dice, blank face
-    }
     avgResultString = avgResultString.replace(diceCode, `(${avgValue})`);
   }
 
   try {
+    min = eval(minResultString);
+    max = eval(maxResultString);
     avg = eval(avgResultString);
   } catch (err) {
     return callback(err, null);
@@ -145,11 +170,50 @@ function roll(diceExpression = `2d6+6`, options = DEFAULT_OPTIONS, callback) {
       if (numberValues[0] === "") {
         numberValues[0] = 1;
       }
+      let numberOfDice = numberValues[0];
+      let numberOfDiceToRoll = numberOfDice;
 
+      /* TODO: Implement drop/keep
+      // check for keep and drop and calculate dice number
+      let diceNumberModifier = 0;
+      let diceNumberMax = null;
+      if (numberValues[1].indexOf("kh") !== -1) {
+        let diceNumberAndKeep = numberValues[1].split("kh");
+        numberValues[1] = diceNumberAndKeep[0];
+        diceNumberMax = diceNumberAndKeep[1];
+      } else if (numberValues[1].indexOf("k") !== -1) {
+        let diceNumberAndKeep = numberValues[1].split("k");
+        numberValues[1] = diceNumberAndKeep[0];
+        diceNumberMax = diceNumberAndKeep[1];
+      } else if (numberValues[1].indexOf("dl") !== -1) {
+        let diceNumberAndDrop = numberValues[1].split("dl");
+        numberValues[1] = diceNumberAndDrop[0];
+        diceNumberModifier = diceNumberAndDrop[1] * -1;
+      } else if (numberValues[1].indexOf("d") !== -1) {
+        let diceNumberAndDrop = numberValues[1].split("d");
+        numberValues[1] = diceNumberAndDrop[0];
+        diceNumberModifier = diceNumberAndDrop[1] * -1;
+      }
+
+      numberOfDice = Number(numberOfDice) + diceNumberModifier;
+
+      // check first for keep/drop modifiers and modify multiple dice count
+      numberOfDice = numberOfDice < 0 ? 0 : numberOfDice;
+      if (
+        diceNumberMax !== null &&
+        diceNumberMax > -1 &&
+        diceNumberMax < numberOfDice
+      ) {
+        numberOfDice = diceNumberMax;
+      }
+      */
+
+      // iterate through all dice
       let diceCodeResult = "";
       let diceCodeValue = 0;
-      for (let j = 0; j < numberValues[0]; j++) {
+      for (let j = 0; j < numberOfDice; j++) {
         let diceValue = 0;
+
         if (numberValues[1] !== "f") {
           diceValue += Math.floor(Math.random() * numberValues[1]) + 1;
         } else {
